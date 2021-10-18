@@ -10,7 +10,7 @@ IER = $600e
 ; Serial mem locations
 ACIA_RX = $4000
 ACIA_TX = $4000
-ACIA_STATUS = $4000
+ACIA_STATUS = $4001
 ACIA_COMMAND = $4002
 ACIA_CONTROL = $4003
 
@@ -45,7 +45,7 @@ reset:
   lda #$1f
   sta ACIA_CONTROL
 
-  ;
+  ; VIA Setup
   lda #$01
   sta PCR
   lda #$82
@@ -87,16 +87,16 @@ nextchar:
 message: .asciiz "ABCDEFG"
 
 loop:
-  ; jsr recv_char_acia
-  ; sta $00
-  ; jsr print_char
-  ; lda $00
-  ; jsr print_char_acia
-  sei
-  lda kb_rptr
-  cmp kb_wptr
-  cli
-  bne key_pressed
+  jsr recv_char_acia
+  sta $00
+  jsr print_char
+  lda $00
+  jsr print_char_acia
+  ; sei
+  ; lda kb_rptr
+  ; cmp kb_wptr
+  ; cli
+  ; bne key_pressed
   jmp loop
 
   ;Add Libraries
@@ -104,9 +104,9 @@ loop:
   include "acia_lib.asm"
   include "lcd_lib.asm"
 
+
 nmi:
   rti
-
 ; Reset/IRQ vectors
   .org $fffa
   .word nmi
