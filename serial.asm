@@ -84,7 +84,7 @@ nextchar:
   inx
   jmp nextchar
 
-message: .asciiz "ABCDEFG"
+message: .asciiz "START"
 
 loop:
   jsr recv_char_acia
@@ -103,6 +103,7 @@ loop:
   include "keyboard_lib.asm"
   include "acia_lib.asm"
   include "lcd_lib.asm"
+  include "xmodem_lib.asm"
 
 
 nmi:
