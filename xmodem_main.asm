@@ -86,24 +86,17 @@ nextchar:
 
 message: .asciiz "START"
 
-loop:
-  jsr recv_char_acia
-  sta $00
-  jsr print_char
-  lda $00
-  jsr print_char_acia
-  ; sei
-  ; lda kb_rptr
-  ; cmp kb_wptr
-  ; cli
-  ; bne key_pressed
-  jmp loop
+; Go into XModem Recieve 
+    ; jmp XModemRcv
+
+loop: ; program ended, halt
+    jmp loop
 
   ;Add Libraries
   include "keyboard_lib.asm"
   include "acia_lib.asm"
   include "lcd_lib.asm"
-  ; include "xmodem_lib.asm"
+;   include "xmodem_lib.asm"
 
 
 nmi:

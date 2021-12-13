@@ -111,7 +111,7 @@ ESC		=	$1b		; ESC to exit
 ; pointed to by eofp & eofph.
 ;
 ;
-		jmp	XmodemRcv	; quick jmp table
+		; jmp	XModemRcv	; quick jmp table
 XModemSend	jsr	PrintMsg	; send prompt and info
 		lda	#$00		;
 		sta	errcnt		; error counter set to 0
@@ -137,15 +137,15 @@ SetstAddr	ldy	#$00		; init data block offset to 0
 		sta	Rbuff+2		; into 3rd byte	
 		lda	ptrh		; load hi byte of start address		
 		sta	Rbuff+3		; into 4th byte
-		jmp	Ldbuff1		; jump into buffer load routine
+		jmp	LdBuff1		; jump into buffer load routine
 
-LdBuffer	lda	Lastblk		; Was the last block sent?
+LdBuffer	lda	lastblk		; Was the last block sent?
 		beq	LdBuff0		; no, send the next one	
 		jmp 	Done		; yes, we're done
 LdBuff0		ldx	#$02		; init pointers
 		ldy	#$00		;
-		inc	Blkno		; inc block counter
-		lda	Blkno		; 
+		inc	blkno		; inc block counter
+		lda	blkno		; 
 		sta	Rbuff		; save in 1st byte of buffer
 		eor	#$FF		; 
 		sta	Rbuff+1		; save 1's comp of blkno next
@@ -159,7 +159,7 @@ LdBuff2		sec			;
 		lda	eofph		;
 		sbc	ptrh		;
 		bne	LdBuff4		; 
-		inc	LastBlk		; Yes, Set last byte flag
+		inc	lastblk		; Yes, Set last byte flag
 LdBuff3		inx			;
 		cpx	#$82		; Are we at the end of the 128 byte block?
 		beq	SCalcCRC	; Yes, calc CRC
@@ -181,9 +181,9 @@ SCalcCRC	jsr 	CalcCRC
 		sta	Rbuff,y		;
 Resend		ldx	#$00		;
 		lda	#SOH
-		jsr	Put_chr		; send SOH
+		jsr	Put_Chr		; send SOH
 SendBlk		lda	Rbuff,x		; Send 132 bytes in buffer to the console
-		jsr	Put_chr		;
+		jsr	Put_Chr		;
 		inx			;
 		cpx	#$84		; last byte?
 		bne	SendBlk		; no, get next
@@ -337,7 +337,7 @@ ACIA_Init      	lda	#$1F           	; 19.2K/8/1
                	sta	ACIA_Command   	; command reg 
                	rts                  	; done
 ;
-; input chr from ACIA (no waiting)
+; input chr from ACIA (no waiting) TODO: switch to ACIA lib
 ;
 Get_Chr		clc			; no chr present
                	lda	ACIA_Status     ; get Serial port status
@@ -347,7 +347,7 @@ Get_Chr		clc			; no chr present
 	       	sec			; and set the Carry Flag
 Get_Chr2    	rts			; done
 ;
-; output to OutPut Port
+; output to OutPut Port TODO: switch to ACIA lib
 ;
 Put_Chr	   	PHA                     ; save registers
 Put_Chr1     	lda	ACIA_Status     ; serial port status
@@ -364,7 +364,7 @@ Put_Chr1     	lda	ACIA_Status     ; serial port status
 ;
 GetByte		lda	#$00		; wait for chr input and cycle timing loop
 		sta	retry		; set low value of timing loop
-StartCrcLp	jsr	Get_chr		; get chr from serial port, don't wait 
+StartCrcLp	jsr	Get_Chr		; get chr from serial port, don't wait 
 		bcs	GetByte1	; got one, so exit
 		dec	retry		; no character received, so dec counter
 		bne	StartCrcLp	;
@@ -430,9 +430,9 @@ CalcCRC1	lda	Rbuff,y		;
 		eor 	crc+1 		; Quick CRC computation with lookup tables
        		tax		 	; updates the two bytes at crc & crc+1
        		lda 	crc		; with the byte send in the "A" register
-       		eor 	CRCHI,X
+       		eor 	crchi,X
        		sta 	crc+1
-      	 	lda 	CRCLO,X
+      	 	lda 	crclo,X
        		sta 	crc
 		iny			;
 		cpy	#$82		; done yet?
