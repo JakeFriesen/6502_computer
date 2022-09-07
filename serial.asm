@@ -1,18 +1,26 @@
+
+; new locations
+; via 8000
+; acia 8400
+; rom c000
+; ram 0
+
+
 ; VIA mem locations
-PORTB = $6000
-PORTA = $6001
-DDRB = $6002
-DDRA = $6003
-PCR = $600c
-IFR = $600d
-IER = $600e
+PORTB = $8000
+PORTA = $8001
+DDRB = $8002
+DDRA = $8003
+PCR = $800c
+IFR = $800d
+IER = $800e
 
 ; Serial mem locations
-ACIA_RX = $4000
-ACIA_TX = $4000
-ACIA_STATUS = $4001
-ACIA_COMMAND = $4002
-ACIA_CONTROL = $4003
+ACIA_RX = $8400
+ACIA_TX = $8400
+ACIA_STATUS = $8401
+ACIA_COMMAND = $8402
+ACIA_CONTROL = $8403
 
 ; Keyboard pointers
 kb_wptr = $0000
@@ -31,7 +39,7 @@ RW = %00100000
 RS = %00010000
 
 
-  .org $8000
+  .org $c000
 
 reset:
   ldx #$ff
