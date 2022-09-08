@@ -1,3 +1,14 @@
+.setcpu "6502"
+.psc02
+;Add Libraries
+.include "keyboard_lib.asm"
+.include "acia_lib.asm"
+.include "lcd_lib.asm"
+.include "xmodem_lib.asm"
+
+.import XModemRcv
+
+
 ; VIA mem locations
 PORTB = $6000
 PORTA = $6001
@@ -87,16 +98,10 @@ nextchar:
 message: .asciiz "START"
 
 ; Go into XModem Recieve 
-    ; jmp XModemRcv
+  JSR XModemRcv
 
 loop: ; program ended, halt
     jmp loop
-
-  ;Add Libraries
-  include "keyboard_lib.asm"
-  include "acia_lib.asm"
-  include "lcd_lib.asm"
-;   include "xmodem_lib.asm"
 
 
 nmi:

@@ -5,6 +5,11 @@
 ; rom c000
 ; ram 0
 
+;Add Libraries
+.include "keyboard_lib.asm"
+.include "acia_lib.asm"
+.include "lcd_lib.asm"
+;.include "xmodem_lib.asm"
 
 ; VIA mem locations
 PORTB = $8000
@@ -22,25 +27,16 @@ ACIA_STATUS = $8401
 ACIA_COMMAND = $8402
 ACIA_CONTROL = $8403
 
-; Keyboard pointers
-kb_wptr = $0000
-kb_rptr = $0001
-kb_flags = $0002
-
 ; Special keys
 RELEASE = %00000001
 SHIFT   = %00000010
-
-; 256-byte kb buffer 0200-02ff
-kb_buffer = $0200  
 
 E  = %01000000
 RW = %00100000
 RS = %00010000
 
 
-  .org $c000
-
+  .code
 reset:
   ldx #$ff
   txs
@@ -92,7 +88,7 @@ nextchar:
   inx
   jmp nextchar
 
-message: .asciiz "START"
+message: .asciiz "ST:"
 
 loop:
   jsr recv_char_acia
@@ -107,17 +103,10 @@ loop:
   ; bne key_pressed
   jmp loop
 
-  ;Add Libraries
-  include "keyboard_lib.asm"
-  include "acia_lib.asm"
-  include "lcd_lib.asm"
-  ; include "xmodem_lib.asm"
-
-
 nmi:
   rti
 ; Reset/IRQ vectors
-  .org $fffa
+  .segment "VECTORS"
   .word nmi
   .word reset
   .word keyboard_interrupt
